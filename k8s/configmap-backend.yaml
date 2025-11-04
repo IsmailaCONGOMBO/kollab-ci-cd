@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: kollab
+data:
+  APP_NAME: "Kollab"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "http://kollab.local"
+  DB_CONNECTION: "mysql"
+  DB_HOST: "mysql"
+  DB_PORT: "3306"
+  DB_DATABASE: "kollab"
+  DB_USERNAME: "kollab_user"
+  CACHE_STORE: "database"
+  QUEUE_CONNECTION: "database"
+  SESSION_DRIVER: "database"

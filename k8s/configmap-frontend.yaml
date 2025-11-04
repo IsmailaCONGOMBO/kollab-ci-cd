@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: kollab
+data:
+  NEXT_PUBLIC_API_URL: "http://kollab.local/api"
+  NODE_ENV: "production"

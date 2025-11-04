@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - secret-db.yaml
+  - configmap-backend.yaml
+  - configmap-frontend.yaml
+  - mysql-statefulset.yaml
+  - mysql-service.yaml
+  - backend-deployment.yaml
+  - backend-service.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+  - ingress.yaml
+
+images:
+  - name: kollab-backend
+    newName: ghcr.io/VOTRE-USERNAME/kollab-backend
+    newTag: latest
+  - name: kollab-frontend
+    newName: ghcr.io/VOTRE-USERNAME/kollab-frontend
+    newTag: latest
