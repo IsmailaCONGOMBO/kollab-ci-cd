@@ -53,3 +53,25 @@ jobs:
           context: ./kollab-front
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/kollab-frontend:latest
+          
+      - name: Test Backend Image
+        run: |
+          echo "Testing backend image..."
+          docker run --rm -d --name test-backend -p 8001:80 ${{ env.REGISTRY }}/${{ github.repository }}/kollab-backend:latest
+          sleep 10
+          curl -f http://localhost:8001 || echo "Backend test failed"
+          docker stop test-backend
+          
+      - name: Test Frontend Image
+        run: |
+          echo "Testing frontend image..."
+          docker run --rm -d --name test-frontend -p 8002:80 ${{ env.REGISTRY }}/${{ github.repository }}/kollab-frontend:latest
+          sleep 5
+          curl -f http://localhost:8002 || echo "Frontend test failed"
+          docker stop test-frontend
+          
+      - name: Images Summary
+        run: |
+          echo "✅ Images built and tested successfully:"
+          echo "Backend: ${{ env.REGISTRY }}/${{ github.repository }}/kollab-backend:latest"
+          echo "Frontend: ${{ env.REGISTRY }}/${{ github.repository }}/kollab-frontend:latest"

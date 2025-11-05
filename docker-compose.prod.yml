@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: kollab-mysql-prod
+    environment:
+      MYSQL_DATABASE: kollab
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: kollab_user
+      MYSQL_PASSWORD: kollab_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+    networks:
+      - kollab-prod
+
+  backend:
+    image: ghcr.io/ismailacongombo/kollab-ci-cd/kollab-backend:latest
+    container_name: kollab-backend-prod
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: kollab
+      DB_USERNAME: kollab_user
+      DB_PASSWORD: kollab_password
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+    networks:
+      - kollab-prod
+
+  frontend:
+    image: ghcr.io/ismailacongombo/kollab-ci-cd/kollab-frontend:latest
+    container_name: kollab-frontend-prod
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - kollab-prod
+
+networks:
+  kollab-prod:
+    driver: bridge
+
+volumes:
+  mysql_prod_data:
