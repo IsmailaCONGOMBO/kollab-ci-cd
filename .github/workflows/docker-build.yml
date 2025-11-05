@@ -57,19 +57,19 @@ jobs:
         with:
           context: ./backend-src
           push: true
-          tags: ghcr.io/${{ github.repository }}/backend:latest
+          tags: ghcr.io/ismailacongombo/kollab-ci-cd/backend:latest
           
       - name: Build Frontend Image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend-src
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:latest
+          tags: ghcr.io/ismailacongombo/kollab-ci-cd/frontend:latest
           
       - name: Test Backend Image
         run: |
           echo "🧪 Testing backend image..."
-          docker run --rm -d --name test-backend -p 8001:80 ghcr.io/${{ github.repository }}/backend:latest
+          docker run --rm -d --name test-backend -p 8001:80 ghcr.io/ismailacongombo/kollab-ci-cd/backend:latest
           sleep 15
           echo "Backend logs:"
           docker logs test-backend --tail 10
@@ -80,7 +80,7 @@ jobs:
       - name: Test Frontend Image
         run: |
           echo "🧪 Testing frontend image..."
-          docker run --rm -d --name test-frontend -p 8002:3000 ghcr.io/${{ github.repository }}/frontend:latest
+          docker run --rm -d --name test-frontend -p 8002:3000 ghcr.io/ismailacongombo/kollab-ci-cd/frontend:latest
           sleep 15
           echo "Frontend logs:"
           docker logs test-frontend --tail 10
@@ -92,7 +92,7 @@ jobs:
         run: |
           echo "🧪 Running application tests..."
           # Test backend API endpoints
-          docker run --rm -d --name api-test -p 8003:80 ghcr.io/${{ github.repository }}/backend:latest
+          docker run --rm -d --name api-test -p 8003:80 ghcr.io/ismailacongombo/kollab-ci-cd/backend:latest
           sleep 20
           echo "Testing backend API:"
           curl -f http://localhost:8003/api/health || echo "API health check failed"
@@ -100,7 +100,7 @@ jobs:
           docker stop api-test
           
           # Test frontend rendering
-          docker run --rm -d --name ui-test -p 8004:3000 ghcr.io/${{ github.repository }}/frontend:latest
+          docker run --rm -d --name ui-test -p 8004:3000 ghcr.io/ismailacongombo/kollab-ci-cd/frontend:latest
           sleep 15
           echo "Testing frontend UI:"
           curl -f http://localhost:8004 && echo "✅ Frontend UI: WORKING"
