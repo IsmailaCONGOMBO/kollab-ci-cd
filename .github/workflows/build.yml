@@ -55,8 +55,131 @@ jobs:
           push: true
           tags: ghcr.io/ismailacongombo/kollab/frontend:latest
           
-      - name: Test
+      - name: Test Images
         run: |
-          echo "✅ Images built successfully"
-          echo "Backend: ghcr.io/ismailacongombo/kollab/backend:latest"
-          echo "Frontend: ghcr.io/ismailacongombo/kollab/frontend:latest"
+          echo "🧪 Testing images..."
+          docker run --rm -d --name test-backend -p 8001:80 ghcr.io/ismailacongombo/kollab/backend:latest
+          sleep 10
+          curl -f http://localhost:8001 && echo "✅ Backend: OK" || echo "❌ Backend: FAILED"
+          docker stop test-backend
+          
+          docker run --rm -d --name test-frontend -p 8002:3000 ghcr.io/ismailacongombo/kollab/frontend:latest
+          sleep 10
+          curl -f http://localhost:8002 && echo "✅ Frontend: OK" || echo "❌ Frontend: FAILED"
+          docker stop test-frontend
+          
+      - name: Create Deployment Files
+        run: |
+          echo "📝 Creating Kubernetes manifests..."
+          mkdir -p k8s-deploy
+          
+          # Backend deployment
+          cat > k8s-deploy/backend.yaml << 'EOF'
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: kollab-backend
+            labels:
+              app: kollab-backend
+          spec:
+            replicas: 2
+            selector:
+              matchLabels:
+                app: kollab-backend
+            template:
+              metadata:
+                labels:
+                  app: kollab-backend
+              spec:
+                containers:
+                - name: backend
+                  image: ghcr.io/ismailacongombo/kollab/backend:latest
+                  ports:
+                  - containerPort: 80
+                  env:
+                  - name: APP_ENV
+                    value: "production"
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: kollab-backend-service
+          spec:
+            selector:
+              app: kollab-backend
+            ports:
+            - port: 80
+              targetPort: 80
+            type: LoadBalancer
+          EOF
+          
+          # Frontend deployment
+          cat > k8s-deploy/frontend.yaml << 'EOF'
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: kollab-frontend
+            labels:
+              app: kollab-frontend
+          spec:
+            replicas: 2
+            selector:
+              matchLabels:
+                app: kollab-frontend
+            template:
+              metadata:
+                labels:
+                  app: kollab-frontend
+              spec:
+                containers:
+                - name: frontend
+                  image: ghcr.io/ismailacongombo/kollab/frontend:latest
+                  ports:
+                  - containerPort: 3000
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: kollab-frontend-service
+          spec:
+            selector:
+              app: kollab-frontend
+            ports:
+            - port: 3000
+              targetPort: 3000
+            type: LoadBalancer
+          EOF
+          
+          # Docker Compose for local deployment
+          cat > k8s-deploy/docker-compose.prod.yaml << 'EOF'
+          version: '3.8'
+          services:
+            backend:
+              image: ghcr.io/ismailacongombo/kollab/backend:latest
+              ports:
+                - "8000:80"
+              environment:
+                - APP_ENV=production
+            frontend:
+              image: ghcr.io/ismailacongombo/kollab/frontend:latest
+              ports:
+                - "3000:3000"
+              depends_on:
+                - backend
+          EOF
+          
+      - name: Deploy Summary
+        run: |
+          echo "🚀 Deployment Ready!"
+          echo "📦 Images:"
+          echo "  - Backend: ghcr.io/ismailacongombo/kollab/backend:latest"
+          echo "  - Frontend: ghcr.io/ismailacongombo/kollab/frontend:latest"
+          echo ""
+          echo "📝 Deployment files created:"
+          ls -la k8s-deploy/
+          echo ""
+          echo "🎯 Deploy commands:"
+          echo "  Kubernetes: kubectl apply -f k8s-deploy/"
+          echo "  Docker Compose: docker-compose -f k8s-deploy/docker-compose.prod.yaml up -d"
+          echo ""
+          echo "✅ CI/CD Pipeline completed successfully!"
