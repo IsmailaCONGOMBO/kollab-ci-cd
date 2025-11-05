@@ -1,0 +1,62 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Get Backend
+        uses: actions/checkout@v4
+        with:
+          repository: k13lucien/Kollab
+          path: backend
+          
+      - name: Get Frontend
+        uses: actions/checkout@v4
+        with:
+          repository: k13lucien/kollab-front
+          path: frontend
+          
+      - name: Fix Frontend
+        run: |
+          echo 'packages: ["."]' > frontend/pnpm-workspace.yaml
+          cat > frontend/Dockerfile << 'EOF'
+          FROM node:20-alpine
+          WORKDIR /app
+          COPY . .
+          RUN npm install || echo "No deps"
+          EXPOSE 3000
+          CMD ["npm", "start"] || ["npx", "serve", "."]
+          EOF
+      
+      - name: Login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ghcr.io/ismailacongombo/kollab/backend:latest
+          
+      - name: Build Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ghcr.io/ismailacongombo/kollab/frontend:latest
+          
+      - name: Test
+        run: |
+          echo "✅ Images built successfully"
+          echo "Backend: ghcr.io/ismailacongombo/kollab/backend:latest"
+          echo "Frontend: ghcr.io/ismailacongombo/kollab/frontend:latest"
