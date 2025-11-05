@@ -16,11 +16,7 @@ jobs:
           repository: k13lucien/Kollab
           path: backend-src
           
-      - name: Get Frontend Code  
-        uses: actions/checkout@v4
-        with:
-          repository: k13lucien/kollab-front
-          path: frontend-src
+      # Skip external frontend repo to avoid pnpm issues
           
       - name: Setup Frontend
         run: |
