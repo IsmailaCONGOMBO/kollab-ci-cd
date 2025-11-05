@@ -27,6 +27,14 @@ jobs:
           
       - name: Create Frontend Dockerfile
         run: |
+          echo "Creating default index.html..."
+          cat > ./kollab-front/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head><title>Kollab Frontend</title></head>
+          <body><h1>Kollab Frontend Running</h1><p>CI/CD Pipeline Success!</p></body>
+          </html>
+          EOF
           cat > ./kollab-front/Dockerfile << 'EOF'
           FROM nginx:alpine
           COPY . /usr/share/nginx/html
