@@ -33,14 +33,13 @@ jobs:
           repository: k13lucien/kollab-front
           path: ./kollab-front
           
-      - name: Fix pnpm workspace
+      - name: Replace pnpm with npm
         run: |
-          echo "Fixing pnpm workspace configuration..."
-          cat > ./kollab-front/pnpm-workspace.yaml << 'EOF'
-packages:
-  - '.'
-EOF
-          echo "Created pnpm-workspace.yaml"
+          echo "Replacing pnpm with npm..."
+          # Supprimer les fichiers pnpm
+          rm -f ./kollab-front/pnpm-lock.yaml ./kollab-front/pnpm-workspace.yaml
+          # Créer package-lock.json si nécessaire
+          cd ./kollab-front && npm install --package-lock-only || echo "No package.json found"
           
       - name: Setup frontend Dockerfile
         run: |
