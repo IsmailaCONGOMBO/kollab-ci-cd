@@ -1,0 +1,51 @@
+name: Docker Build Only
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Get Backend Code
+        uses: actions/checkout@v4
+        with:
+          repository: k13lucien/Kollab
+          path: backend-src
+          
+      - name: Get Frontend Code  
+        uses: actions/checkout@v4
+        with:
+          repository: k13lucien/kollab-front
+          path: frontend-src
+          
+      - name: Setup Frontend
+        run: |
+          mkdir -p frontend-build
+          echo '<html><body><h1>Kollab Frontend</h1></body></html>' > frontend-build/index.html
+          echo 'FROM nginx:alpine' > frontend-build/Dockerfile
+          echo 'COPY index.html /usr/share/nginx/html/' >> frontend-build/Dockerfile
+      
+      - name: Login to Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Build Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend-src
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backend:latest
+          
+      - name: Build Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend-build
+          push: true
+          tags: ghcr.io/${{ github.repository }}/frontend:latest
