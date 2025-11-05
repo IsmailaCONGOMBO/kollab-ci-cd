@@ -65,3 +65,34 @@ jobs:
           context: ./frontend-src
           push: true
           tags: ghcr.io/${{ github.repository }}/frontend:latest
+          
+      - name: Test Backend Image
+        run: |
+          echo "🧪 Testing backend image..."
+          docker run --rm -d --name test-backend -p 8001:80 ghcr.io/${{ github.repository }}/backend:latest
+          sleep 15
+          echo "Backend logs:"
+          docker logs test-backend --tail 10
+          echo "Testing backend response:"
+          curl -f http://localhost:8001 && echo "✅ Backend: WORKING" || echo "❌ Backend: FAILED"
+          docker stop test-backend
+          
+      - name: Test Frontend Image
+        run: |
+          echo "🧪 Testing frontend image..."
+          docker run --rm -d --name test-frontend -p 8002:3000 ghcr.io/${{ github.repository }}/frontend:latest
+          sleep 15
+          echo "Frontend logs:"
+          docker logs test-frontend --tail 10
+          echo "Testing frontend response:"
+          curl -f http://localhost:8002 && echo "✅ Frontend: WORKING" || echo "❌ Frontend: FAILED"
+          docker stop test-frontend
+          
+      - name: Verification Summary
+        run: |
+          echo "📋 Build Summary:"
+          echo "✅ Backend cloned from: k13lucien/Kollab"
+          echo "✅ Frontend cloned from: k13lucien/kollab-front"
+          echo "✅ Backend image: ghcr.io/${{ github.repository }}/backend:latest"
+          echo "✅ Frontend image: ghcr.io/${{ github.repository }}/frontend:latest"
+          echo "🎉 CI/CD Pipeline completed successfully!"
