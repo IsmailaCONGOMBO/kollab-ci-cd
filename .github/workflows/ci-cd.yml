@@ -33,6 +33,15 @@ jobs:
           repository: k13lucien/kollab-front
           path: ./kollab-front
           
+      - name: Fix pnpm workspace
+        run: |
+          echo "Fixing pnpm workspace configuration..."
+          cat > ./kollab-front/pnpm-workspace.yaml << 'EOF'
+packages:
+  - '.'
+EOF
+          echo "Created pnpm-workspace.yaml"
+          
       - name: Setup frontend Dockerfile
         run: |
           echo "Setting up frontend Dockerfile..."
