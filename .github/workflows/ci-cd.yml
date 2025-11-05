@@ -34,6 +34,12 @@ jobs:
         working-directory: ./Kollab
         run: composer install --prefer-dist --no-progress
         
+      - name: Copy .env and generate key
+        working-directory: ./Kollab
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+        
       - name: Run tests
         working-directory: ./Kollab
         run: php artisan test
