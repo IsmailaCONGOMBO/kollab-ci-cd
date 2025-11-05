@@ -1,4 +1,5 @@
 name: Kollab CI/CD Pipeline
+# Force rebuild - no pnpm
 
 on:
   push:
