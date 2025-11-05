@@ -1,4 +1,4 @@
-name: Simple Kollab CI
+name: Kollab Build Pipeline
 
 on:
   push:
