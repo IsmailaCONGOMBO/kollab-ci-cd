@@ -31,6 +31,13 @@ jobs:
         with:
           repository: k13lucien/kollab-front
           path: ./kollab-front
+          
+      - name: Debug frontend repo
+        run: |
+          echo "Frontend repo contents:"
+          ls -la ./kollab-front/
+          echo "Looking for Dockerfile:"
+          find ./kollab-front/ -name "Dockerfile" -o -name "dockerfile"
       
       - name: Log in to Container Registry
         uses: docker/login-action@v3
