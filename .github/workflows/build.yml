@@ -168,6 +168,12 @@ jobs:
                 - backend
           EOF
           
+      - name: Upload Deployment Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-files
+          path: k8s-deploy/
+          
       - name: Deploy Summary
         run: |
           echo "🚀 Deployment Ready!"
@@ -182,4 +188,5 @@ jobs:
           echo "  Kubernetes: kubectl apply -f k8s-deploy/"
           echo "  Docker Compose: docker-compose -f k8s-deploy/docker-compose.prod.yaml up -d"
           echo ""
+          echo "📋 Download deployment files from GitHub Actions artifacts"
           echo "✅ CI/CD Pipeline completed successfully!"
