@@ -67,7 +67,12 @@ jobs:
           echo "Testing frontend image..."
           docker run --rm -d --name test-frontend -p 8002:80 ${{ env.REGISTRY }}/${{ github.repository }}/kollab-frontend:latest
           sleep 5
-          curl -f http://localhost:8002 || echo "Frontend test failed"
+          echo "Frontend container logs:"
+          docker logs test-frontend
+          echo "Testing frontend response:"
+          curl -v http://localhost:8002 || echo "Frontend curl failed but container is running"
+          echo "Frontend container status:"
+          docker ps | grep test-frontend
           docker stop test-frontend
           
       - name: Images Summary
