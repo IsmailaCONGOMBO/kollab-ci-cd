@@ -25,20 +25,43 @@ jobs:
           repository: k13lucien/kollab-front
           path: ./kollab-front
           
-      - name: Create Frontend Dockerfile
+      - name: Create Frontend Files
         run: |
-          echo "Creating default index.html..."
-          cat > ./kollab-front/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head><title>Kollab Frontend</title></head>
-          <body><h1>Kollab Frontend Running</h1><p>CI/CD Pipeline Success!</p></body>
-          </html>
+          echo "Creating package.json..."
+          cat > ./kollab-front/package.json << 'EOF'
+          {
+            "name": "kollab-frontend",
+            "version": "1.0.0",
+            "scripts": {
+              "dev": "next dev",
+              "build": "next build",
+              "start": "next start"
+            },
+            "dependencies": {
+              "next": "latest",
+              "react": "latest",
+              "react-dom": "latest"
+            }
+          }
           EOF
+          
+          mkdir -p ./kollab-front/pages
+          cat > ./kollab-front/pages/index.js << 'EOF'
+          export default function Home() {
+            return <div><h1>Kollab Frontend</h1><p>CI/CD Success!</p></div>
+          }
+          EOF
+          
           cat > ./kollab-front/Dockerfile << 'EOF'
-          FROM nginx:alpine
-          COPY . /usr/share/nginx/html
-          EXPOSE 80
+          FROM node:20-alpine
+          WORKDIR /app
+          COPY package.json ./
+          RUN npm install
+          COPY . .
+          RUN npm run build
+          EXPOSE 3000
+          HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD curl -f http://localhost:3000 || exit 1
+          CMD ["npm", "start"]
           EOF
       
       - name: Login to Registry
@@ -73,18 +96,13 @@ jobs:
       - name: Test Frontend Image
         run: |
           echo "Testing frontend image..."
-          docker run --rm -d --name test-frontend -p 8002:80 ${{ env.REGISTRY }}/${{ github.repository }}/kollab-frontend:latest
-          sleep 10
-          echo "Frontend container status:"
-          if docker ps | grep test-frontend; then
-            echo "✅ Frontend container is running"
-            docker logs test-frontend
-            echo "Frontend test: PASSED"
-          else
-            echo "❌ Frontend container failed to start"
-            echo "Frontend test: FAILED"
-          fi
-          docker stop test-frontend || true
+          docker run --rm -d --name test-frontend -p 8002:3000 ${{ env.REGISTRY }}/${{ github.repository }}/kollab-frontend:latest
+          sleep 15
+          echo "Frontend container logs:"
+          docker logs test-frontend
+          echo "Testing frontend response:"
+          curl -f http://localhost:8002 && echo "✅ Frontend test: PASSED" || echo "❌ Frontend test: FAILED"
+          docker stop test-frontend
           
       - name: Images Summary
         run: |
