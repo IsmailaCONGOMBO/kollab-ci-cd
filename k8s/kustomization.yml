@@ -16,8 +16,8 @@ resources:
 
 images:
   - name: kollab-backend
-    newName: ghcr.io/VOTRE-USERNAME/kollab-backend
+    newName: ghcr.io/ismailacongombo/kollab-backend
     newTag: latest
   - name: kollab-frontend
-    newName: ghcr.io/VOTRE-USERNAME/kollab-frontend
+    newName: ghcr.io/ismailacongombo/kollab-frontend
     newTag: latest
