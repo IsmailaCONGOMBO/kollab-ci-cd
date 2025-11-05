@@ -34,14 +34,12 @@ jobs:
         working-directory: ./Kollab
         run: composer install --prefer-dist --no-progress
         
-      - name: Copy .env and generate key
-        working-directory: ./Kollab
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-        
       - name: Run tests
         working-directory: ./Kollab
+        env:
+          APP_KEY: base64:2fl+Ktvkdab+Ky2SbSxUVgP7XRSqxCyQ4d2FhVuuD30=
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
         run: php artisan test
 
   test-frontend:
