@@ -32,12 +32,28 @@ jobs:
           repository: k13lucien/kollab-front
           path: ./kollab-front
           
-      - name: Debug frontend repo
+      - name: Setup frontend Dockerfile
         run: |
+          echo "Setting up frontend Dockerfile..."
+          # Si le Dockerfile n'existe pas dans le repo externe, on copie le nôtre
+          if [ ! -f ./kollab-front/Dockerfile ]; then
+            echo "Dockerfile not found in external repo, copying from local..."
+            # Créer un Dockerfile simple pour Next.js
+            cat > ./kollab-front/Dockerfile << 'EOF'
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+EOF
+          fi
           echo "Frontend repo contents:"
           ls -la ./kollab-front/
-          echo "Looking for Dockerfile:"
-          find ./kollab-front/ -name "Dockerfile" -o -name "dockerfile"
+          echo "Dockerfile content:"
+          cat ./kollab-front/Dockerfile
       
       - name: Log in to Container Registry
         uses: docker/login-action@v3
