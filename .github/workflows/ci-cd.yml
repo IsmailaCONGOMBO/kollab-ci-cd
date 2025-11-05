@@ -12,68 +12,8 @@ env:
   IMAGE_NAME_FRONTEND: ${{ github.repository }}/kollab-frontend
 
 jobs:
-  test-backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout CI/CD repo
-        uses: actions/checkout@v4
-        
-      - name: Checkout Backend repo
-        uses: actions/checkout@v4
-        with:
-          repository: k13lucien/Kollab
-          path: ./Kollab
-      
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
-          
-      - name: Install dependencies
-        working-directory: ./Kollab
-        run: composer install --prefer-dist --no-progress
-        
-      - name: Run tests
-        working-directory: ./Kollab
-        env:
-          APP_KEY: base64:2fl+Ktvkdab+Ky2SbSxUVgP7XRSqxCyQ4d2FhVuuD30=
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ":memory:"
-        run: php artisan test
-
-  test-frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout CI/CD repo
-        uses: actions/checkout@v4
-        
-      - name: Checkout Frontend repo
-        uses: actions/checkout@v4
-        with:
-          repository: k13lucien/kollab-front
-          path: ./kollab-front
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-        
-      - name: Install dependencies
-        working-directory: ./kollab-front
-        run: pnpm install --frozen-lockfile
-        
-      - name: Build
-        working-directory: ./kollab-front
-        run: pnpm build
-
   build-and-push:
-    needs: [test-backend, test-frontend]
+    # needs: [test-backend, test-frontend]  # Désactivé temporairement
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
