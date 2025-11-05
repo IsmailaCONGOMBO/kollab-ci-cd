@@ -110,12 +110,12 @@ jobs:
         run: |
           echo "🚀 Pushing to multiple registries..."
           # Tag for different environments
-          docker tag ghcr.io/${{ github.repository }}/backend:latest ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
-          docker tag ghcr.io/${{ github.repository }}/frontend:latest ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+          docker tag ghcr.io/ismailacongombo/kollab-ci-cd/backend:latest ghcr.io/ismailacongombo/kollab-ci-cd/backend:${{ github.sha }}
+          docker tag ghcr.io/ismailacongombo/kollab-ci-cd/frontend:latest ghcr.io/ismailacongombo/kollab-ci-cd/frontend:${{ github.sha }}
           
           # Push with commit SHA tags
-          docker push ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+          docker push ghcr.io/ismailacongombo/kollab-ci-cd/backend:${{ github.sha }}
+          docker push ghcr.io/ismailacongombo/kollab-ci-cd/frontend:${{ github.sha }}
           
           echo "✅ Images pushed with tags: latest and ${{ github.sha }}"
           
@@ -142,7 +142,7 @@ jobs:
               spec:
                 containers:
                 - name: backend
-                  image: ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+                  image: ghcr.io/ismailacongombo/kollab-ci-cd/backend:${{ github.sha }}
                   ports:
                   - containerPort: 80
           EOF
@@ -164,7 +164,7 @@ jobs:
               spec:
                 containers:
                 - name: frontend
-                  image: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+                  image: ghcr.io/ismailacongombo/kollab-ci-cd/frontend:${{ github.sha }}
                   ports:
                   - containerPort: 3000
           EOF
@@ -183,9 +183,9 @@ jobs:
           echo "✅ Deploy: Kubernetes manifests ready"
           echo ""
           echo "📦 Available Images:"
-          echo "  - ghcr.io/${{ github.repository }}/backend:latest"
-          echo "  - ghcr.io/${{ github.repository }}/backend:${{ github.sha }}"
-          echo "  - ghcr.io/${{ github.repository }}/frontend:latest"
-          echo "  - ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}"
+          echo "  - ghcr.io/ismailacongombo/kollab-ci-cd/backend:latest"
+          echo "  - ghcr.io/ismailacongombo/kollab-ci-cd/backend:${{ github.sha }}"
+          echo "  - ghcr.io/ismailacongombo/kollab-ci-cd/frontend:latest"
+          echo "  - ghcr.io/ismailacongombo/kollab-ci-cd/frontend:${{ github.sha }}"
           echo ""
           echo "🚀 Ready for production deployment!"
