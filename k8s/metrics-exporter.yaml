@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-exporter
+  namespace: kollab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics-exporter
+  template:
+    metadata:
+      labels:
+        app: metrics-exporter
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: metrics-exporter
+        image: prom/node-exporter:latest
+        ports:
+        - containerPort: 9090
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - |
+            while true; do
+              # Check backend
+              if curl -s http://backend:80 > /dev/null; then
+                backend_status=1
+              else
+                backend_status=0
+              fi
+              
+              # Check frontend
+              if curl -s http://frontend:3000 > /dev/null; then
+                frontend_status=1
+              else
+                frontend_status=0
+              fi
+              
+              # Generate metrics
+              cat > /tmp/metrics.prom << EOF
+            # HELP kollab_backend_up Backend service status
+            # TYPE kollab_backend_up gauge
+            kollab_backend_up $backend_status
+            # HELP kollab_frontend_up Frontend service status
+            # TYPE kollab_frontend_up gauge
+            kollab_frontend_up $frontend_status
+            # HELP kollab_services_total Total services monitored
+            # TYPE kollab_services_total gauge
+            kollab_services_total 2
+            EOF
+              
+              sleep 30
+            done &
+            
+            # Start simple HTTP server for metrics
+            while true; do
+              echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n$(cat /tmp/metrics.prom 2>/dev/null || echo '# No metrics')" | nc -l -p 9090
+            done
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-exporter
+  namespace: kollab
+spec:
+  selector:
+    app: metrics-exporter
+  ports:
+  - port: 9090
+    targetPort: 9090

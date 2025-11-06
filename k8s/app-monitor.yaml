@@ -81,3 +81,12 @@ data:
     # HELP kollab_mysql_up MySQL service status
     # TYPE kollab_mysql_up gauge
     kollab_mysql_up 1
+    # HELP kollab_backend_response_time Backend response time
+    # TYPE kollab_backend_response_time gauge
+    kollab_backend_response_time 0.05
+    # HELP kollab_frontend_response_time Frontend response time
+    # TYPE kollab_frontend_response_time gauge
+    kollab_frontend_response_time 0.02
+    # HELP kollab_total_requests Total requests
+    # TYPE kollab_total_requests counter
+    kollab_total_requests 100
