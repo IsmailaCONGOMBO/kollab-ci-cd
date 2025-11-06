@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/ismailacongombo/kollab/backend:latest
+          image: projet-backend:latest
+          imagePullPolicy: Never
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

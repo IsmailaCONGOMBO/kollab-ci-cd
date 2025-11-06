@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/ismailacongombo/kollab/frontend:latest
+          image: projet-frontend:latest
+          imagePullPolicy: Never
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
