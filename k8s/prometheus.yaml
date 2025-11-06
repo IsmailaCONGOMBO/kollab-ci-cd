@@ -78,3 +78,8 @@ data:
       - targets: ['metrics-exporter:9090']
       metrics_path: '/metrics'
       scrape_interval: 15s
+    - job_name: 'kollab-app-metrics'
+      static_configs:
+      - targets: ['app-metrics-collector:8080']
+      metrics_path: '/metrics'
+      scrape_interval: 30s
