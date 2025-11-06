@@ -20,3 +20,6 @@ data:
   SANCTUM_STATEFUL_DOMAINS: "kollab.local,localhost,127.0.0.1"
   SESSION_DOMAIN: ".kollab.local"
   CORS_ALLOWED_ORIGINS: "*"
+  VIEW_COMPILED_PATH: "/var/www/storage/framework/views"
+  CACHE_PATH: "/var/www/storage/framework/cache"
+  LOG_CHANNEL: "stderr"

@@ -17,6 +17,24 @@ spec:
         prometheus.io/port: "80"
         prometheus.io/path: "/metrics"
     spec:
+      initContainers:
+      - name: setup-cache
+        image: projet-backend:latest
+        imagePullPolicy: Never
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - |
+            mkdir -p /var/www/storage/framework/views
+            mkdir -p /var/www/storage/framework/cache/data
+            mkdir -p /var/www/storage/logs
+            chmod -R 777 /var/www/storage
+            chown -R www-data:www-data /var/www/storage
+        volumeMounts:
+        - name: storage-data
+          mountPath: /var/www/storage
+        - name: cache-data
+          mountPath: /var/www/bootstrap/cache
       containers:
         - name: backend
           image: projet-backend:latest
