@@ -7,7 +7,7 @@ data:
   APP_NAME: "Kollab"
   APP_ENV: "production"
   APP_DEBUG: "true"
-  APP_KEY: "base64:YourAppKeyHere1234567890123456789012345678901234567890="
+  APP_KEY: "base64:SGVsbG9Xb3JsZEhlbGxvV29ybGRIZWxsb1dvcmxkSGVsbG9Xb3JsZA=="
   APP_URL: "http://kollab.local"
   DB_CONNECTION: "mysql"
   DB_HOST: "mysql"

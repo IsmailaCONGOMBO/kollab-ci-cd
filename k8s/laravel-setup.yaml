@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: laravel-setup
+  namespace: kollab
+spec:
+  template:
+    spec:
+      containers:
+      - name: laravel-setup
+        image: projet-backend:latest
+        imagePullPolicy: Never
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - |
+            echo "Setting up Laravel..."
+            php artisan key:generate --show
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan view:clear
+            echo "Laravel setup completed"
+        envFrom:
+        - configMapRef:
+            name: backend-config
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: MYSQL_PASSWORD
+      restartPolicy: OnFailure
