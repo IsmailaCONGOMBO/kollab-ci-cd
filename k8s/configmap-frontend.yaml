@@ -4,5 +4,6 @@ metadata:
   name: frontend-config
   namespace: kollab
 data:
-  NEXT_PUBLIC_API_URL: "http://kollab.local/api"
+  NEXT_PUBLIC_API_URL: "http://127.0.0.1:31201/api"
+  NEXT_PUBLIC_BACKEND_URL: "http://127.0.0.1:31201"
   NODE_ENV: "production"
