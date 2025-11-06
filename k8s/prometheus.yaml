@@ -56,13 +56,23 @@ data:
     - job_name: 'kubernetes-pods'
       kubernetes_sd_configs:
       - role: pod
+        namespaces:
+          names: ['kollab']
       relabel_configs:
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
         action: keep
         regex: true
-    - job_name: 'kollab-backend'
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: (.+)
+        replacement: ${1}:${__meta_kubernetes_pod_annotation_prometheus_io_port}
+    - job_name: 'node-exporter'
       static_configs:
-      - targets: ['backend:80']
-    - job_name: 'kollab-frontend'
+      - targets: ['node-exporter:9100']
+    - job_name: 'kube-state-metrics'
       static_configs:
-      - targets: ['frontend:3000']
+      - targets: ['kube-state-metrics:8080']
+    - job_name: 'kollab-services'
+      static_configs:
+      - targets: ['backend:80', 'frontend:3000', 'mysql:3306']
