@@ -73,11 +73,6 @@ data:
     - job_name: 'kube-state-metrics'
       static_configs:
       - targets: ['kube-state-metrics:8080']
-    - job_name: 'kollab-app-monitor'
-      static_configs:
-      - targets: ['app-monitor:8080']
-      metrics_path: '/metrics'
-      scrape_interval: 15s
     - job_name: 'kollab-metrics-exporter'
       static_configs:
       - targets: ['metrics-exporter:9090']
