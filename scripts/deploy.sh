@@ -33,3 +33,5 @@ echo "✅ Statut des pods:"
 kubectl get pods -n $NAMESPACE
 
 echo "🎉 Déploiement terminé avec succès!"
+
+# modif
