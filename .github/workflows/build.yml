@@ -3,6 +3,8 @@ name: Build and Deploy
 on:
   push:
     branches: [ main ]
+  repository_dispatch:
+    types: [backend_updated, frontend_updated]
 
 jobs:
   build:
@@ -194,6 +196,12 @@ jobs:
           echo "📦 Images:"
           echo "  - Backend: ghcr.io/ismailacongombo/kollab/backend:latest"
           echo "  - Frontend: ghcr.io/ismailacongombo/kollab/frontend:latest"
+          echo ""
+          echo "🔄 Triggered by: ${{ github.event_name }}"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "📡 Event type: ${{ github.event.action }}"
+            echo "📝 Client payload: ${{ toJson(github.event.client_payload) }}"
+          fi
           echo ""
           echo "📝 Deployment files created:"
           ls -la k8s-deploy/

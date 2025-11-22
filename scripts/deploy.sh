@@ -34,4 +34,4 @@ kubectl get pods -n $NAMESPACE
 
 echo "🎉 Déploiement terminé avec succès!"
 
-# modif
+# mod
